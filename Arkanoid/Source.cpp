@@ -177,7 +177,7 @@ int main()
 		if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
 			break;
 
-		// Every loop iterarion, we need update the ball and paddle
+		// Every loop iteration, we need update the ball and paddle
 		ball.update();
 		paddle.update();
 		testCollision(paddle, ball);
