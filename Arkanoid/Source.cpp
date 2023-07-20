@@ -20,7 +20,7 @@ struct Ball
 	Vector2f velocity{ -ballVelocity, -ballVelocity };
 
 
-	// Ball constructor 
+	// Ball constructor
 	// mX starting X coord
 	// mY starting Y coord
 	Ball(float mX, float mY)
@@ -32,13 +32,13 @@ struct Ball
 	}
 
 	void update()
-	{ 
+	{
 		shape.move(velocity);
 		if (left() < 0) velocity.x = ballVelocity;
 		else if (right() > windowWidth) velocity.x = -ballVelocity;
-		
+
 		if (top() < 0) velocity.y = ballVelocity;
-		else if (botton() > windowHeight) velocity.y = -ballVelocity;
+		else if (bottom() > windowHeight) velocity.y = -ballVelocity;
 	}
 
 	float x()		{ return shape.getPosition().x; }
@@ -46,7 +46,7 @@ struct Ball
 	float left()	{ return x() - shape.getRadius(); }
 	float right()	{ return x() + shape.getRadius(); }
 	float top()		{ return y() - shape.getRadius(); }
-	float botton()	{ return y() + shape.getRadius(); }
+	float bottom()	{ return y() + shape.getRadius(); }
 
 };
 
@@ -81,7 +81,7 @@ struct Paddle
 	float left()	{ return x() - shape.getSize().x / 2.f; }
 	float right()	{ return x() + shape.getSize().x / 2.f; }
 	float top()		{ return y() - shape.getSize().y / 2.f; }
-	float botton()	{ return y() + shape.getSize().y / 2.f; }
+	float bottom()	{ return y() + shape.getSize().y / 2.f; }
 };
 
 struct Brick
@@ -102,19 +102,19 @@ struct Brick
 	float left()	{ return x() - shape.getSize().x / 2.f; }
 	float right()	{ return x() + shape.getSize().x / 2.f; }
 	float top()		{ return y() - shape.getSize().y / 2.f; }
-	float botton()	{ return y() + shape.getSize().y / 2.f; }
+	float bottom()	{ return y() + shape.getSize().y / 2.f; }
 };
 
 template<typename T1, typename T2> bool isIntersecting(T1& mA, T2& mB)
 {
 	return mA.right() >= mB.left() && mA.left() <= mB.right()
-		&& mA.botton() >= mB.top() && mA.top() <= mB.botton();
+		&& mA.bottom() >= mB.top() && mA.top() <= mB.bottom();
 }
 
 
 void testCollision(Paddle& mPaddle, Ball& mBall)
 {
-	if (!isIntersecting(mPaddle, mBall)) 
+	if (!isIntersecting(mPaddle, mBall))
 		return;
 
 	// let's push the ball upwards
@@ -135,18 +135,18 @@ void testCollision(Brick& mBrick, Ball& mBall)
 	// calculate how much the ball intersects the brick
 	float overlapLeft{ mBall.right() - mBrick.left() };
 	float overlapRight{ mBrick.right() - mBall.left() };
-	float overlapTop{ mBall.botton() - mBrick.top() };
-	float overlapBotton{ mBrick.botton() - mBall.top() };
+	float overlapTop{ mBall.bottom() - mBrick.top() };
+	float overlapBottom{ mBrick.bottom() - mBall.top() };
 
-	// if the magnitude of the left overlap is smaller than the 
+	// if the magnitude of the left overlap is smaller than the
 	// right one we can safely assume the ball hit the brick
-	// from the left. The same for top/botton collisions
+	// from the left. The same for top/bottom collisions
 	bool ballFromLeft(abs(overlapLeft) < abs(overlapRight));
-	bool ballFromTop(abs(overlapTop) < abs(overlapBotton));
+	bool ballFromTop(abs(overlapTop) < abs(overlapBottom));
 
 	// store the minimum overlaps for the X and Y axes
 	float minOverlapX{ ballFromLeft ? overlapLeft : overlapRight };
-	float minOverlapY{ ballFromTop ? overlapTop : overlapBotton };
+	float minOverlapY{ ballFromTop ? overlapTop : overlapBottom };
 
 	if (abs(minOverlapX) < abs(minOverlapY))
 		mBall.velocity.x = ballFromLeft ? -ballVelocity : ballVelocity;
@@ -195,6 +195,6 @@ int main()
 
 		window.display();
 	}
-	
+
 	return 0;
 }
